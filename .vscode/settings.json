@@ -1,0 +1,60 @@
+{
+  // 파일 이동 시 import 경로 자동 업데이트
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  // 언어별 포맷터 설정
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  // 전역 포맷터 및 자동 저장
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.tabSize": 2,
+  // 저장 시 자동 고침 및 import 정리
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  // ESLint 활성화: 검사할 파일 타입
+  "eslint.validate": [
+    "javascript",
+    "typescript",
+    "javascriptreact",
+    "typescriptreact"
+  ],
+  "eslint.format.enable": true,
+  "eslint.alwaysShowStatus": true,
+  // ✨ Flat Config 지원을 위해 반드시 추가해야 할 옵션
+  "eslint.useFlatConfig": true,
+  // Prettier: 프로젝트에 .prettierrc 또는 package.json 에서 설정을 읽도록
+  "prettier.requireConfig": true,
+  // 트레일링 공백 자동 제거 (VS Code 차원)
+  "files.trimTrailingWhitespace": true,
+  "editor.trimAutoWhitespace": true,
+  // Git 설정
+  "git.rebaseWhenSync": true,
+  "git.autofetch": true,
+  "git.enableSmartCommit": true,
+  // 기타 확장 설정
+  "search-node-modules.path": "node_modules",
+  "markdown.extension.toc.updateOnSave": false,
+  "cSpell.enabled": true,
+  "cSpell.language": "en,ko",
+  "cSpell.words": [
+    "INITDB"
+  ]
+}

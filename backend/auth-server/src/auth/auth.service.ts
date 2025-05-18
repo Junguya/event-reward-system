@@ -1,9 +1,11 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcryptjs';
 import { Model } from 'mongoose';
 
+import { HttpService } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import { parseExpiryToMs } from 'src/common/utils/time.util';
 import { JwtConfigService } from '../config/jwt.config';
 import { UserRes } from '../users/dto/user.res';
@@ -16,10 +18,14 @@ import { RefreshToken, RefreshTokenDocument } from './schemas/refresh-token.sche
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly jwtConfig: JwtConfigService,
+    private readonly httpService: HttpService,
+    private readonly configService: ConfigService,
 
     @InjectModel(RefreshToken.name)
     private readonly refreshTokenModel: Model<RefreshTokenDocument>,
@@ -35,9 +41,9 @@ export class AuthService {
     return user;
   }
 
-  async signUp(req: SignUpReq): Promise<UserRes> {
+  async signUp(signUpReq: SignUpReq): Promise<UserRes> {
     const createUserDto = {
-      ...req,
+      ...signUpReq,
       roles: ['USER'],
     };
     return this.usersService.create(createUserDto);
@@ -71,6 +77,22 @@ export class AuthService {
       },
       { upsert: true, new: true },
     );
+
+    try {
+      const eventServiceUrl = this.configService.getOrThrow<string>('EVENT_SERVICE_URL');
+
+      await this.httpService.axiosRef.post(
+        `${eventServiceUrl}/user-stats/${populatedUser.id}/login`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`, // 필요 없다면 제거 가능
+          },
+        },
+      );
+    } catch (error) {
+      this.logger?.warn?.(`loginDays 증가 실패 - ${error.message}`);
+    }
 
     return {
       accessToken,

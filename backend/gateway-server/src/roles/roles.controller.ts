@@ -44,10 +44,10 @@ export class RolesController {
   @Roles('ADMIN')
   @ApiOperation({ summary: '역할 생성 (ADMIN만 가능)' })
   @ApiOkResponse({ type: RoleRes })
-  create(@Req() req: Request, @Body() dto: CreateRoleReq): Promise<RoleRes> {
+  create(@Req() req: Request, @Body() createRoleReq: CreateRoleReq): Promise<RoleRes> {
     const accessToken = extractAccessToken(req);
 
-    return this.rolesService.create(dto, accessToken);
+    return this.rolesService.create(createRoleReq, accessToken);
   }
 
   @Patch(':id')
@@ -57,11 +57,11 @@ export class RolesController {
   update(
     @Req() req: Request,
     @Param('id') id: string,
-    @Body() dto: UpdateRoleReq,
+    @Body() updateRoleReq: UpdateRoleReq,
   ): Promise<RoleRes> {
     const accessToken = extractAccessToken(req);
 
-    return this.rolesService.update(id, dto, accessToken);
+    return this.rolesService.update(id, updateRoleReq, accessToken);
   }
 
   @Delete(':id')

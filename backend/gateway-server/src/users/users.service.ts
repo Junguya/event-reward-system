@@ -15,10 +15,10 @@ export class UsersService {
 
   constructor(private readonly http: HttpService) {}
 
-  async create(dto: CreateUserReq, accessToken: string): Promise<UserRes> {
+  async create(createUserReq: CreateUserReq, accessToken: string): Promise<UserRes> {
     try {
       const { data } = await lastValueFrom(
-        this.http.post<UserRes>(`${this.authBaseUrl}/users`, dto, {
+        this.http.post<UserRes>(`${this.authBaseUrl}/users`, createUserReq, {
           headers: { Authorization: `Bearer ${accessToken}` },
         }),
       );
@@ -54,10 +54,10 @@ export class UsersService {
     }
   }
 
-  async updateMe(dto: UpdateUserReq, accessToken: string): Promise<UserRes> {
+  async updateMe(updateUserReq: UpdateUserReq, accessToken: string): Promise<UserRes> {
     try {
       const { data } = await lastValueFrom(
-        this.http.patch<UserRes>(`${this.authBaseUrl}/users/me`, dto, {
+        this.http.patch<UserRes>(`${this.authBaseUrl}/users/me`, updateUserReq, {
           headers: { Authorization: `Bearer ${accessToken}` },
         }),
       );
@@ -67,12 +67,19 @@ export class UsersService {
     }
   }
 
-  async updatePassword(dto: UpdatePasswordReq, accessToken: string): Promise<{ message: string }> {
+  async updatePassword(
+    updatePasswordReq: UpdatePasswordReq,
+    accessToken: string,
+  ): Promise<{ message: string }> {
     try {
       const { data } = await lastValueFrom(
-        this.http.patch<{ message: string }>(`${this.authBaseUrl}/users/me/password`, dto, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }),
+        this.http.patch<{ message: string }>(
+          `${this.authBaseUrl}/users/me/password`,
+          updatePasswordReq,
+          {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          },
+        ),
       );
       return data;
     } catch (err) {
@@ -80,10 +87,14 @@ export class UsersService {
     }
   }
 
-  async updateRoles(id: string, dto: UpdateUserRoleReq, accessToken: string): Promise<UserRes> {
+  async updateRoles(
+    id: string,
+    updateUserRoleReq: UpdateUserRoleReq,
+    accessToken: string,
+  ): Promise<UserRes> {
     try {
       const { data } = await lastValueFrom(
-        this.http.patch<UserRes>(`${this.authBaseUrl}/users/${id}/roles`, dto, {
+        this.http.patch<UserRes>(`${this.authBaseUrl}/users/${id}/roles`, updateUserRoleReq, {
           headers: { Authorization: `Bearer ${accessToken}` },
         }),
       );

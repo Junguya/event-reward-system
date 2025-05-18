@@ -44,4 +44,31 @@ export class UserRes {
     description: '수정 일시',
   })
   updatedAt: Date;
+
+  @ApiProperty({
+    example: '2025-05-17T03:12:22.123Z',
+    description: '삭제 일시',
+    required: false,
+  })
+  deletedAt?: Date;
+
+  @ApiProperty({
+    example: '664f5dbe24f6a9a1e6d2713b',
+    description: '생성자 ID',
+  })
+  createdBy: string;
+
+  @ApiProperty({
+    example: '664f5dbe24f6a9a1e6d2713b',
+    description: '수정자 ID',
+    required: false,
+  })
+  updatedBy?: string;
+
+  @ApiProperty({
+    example: '664f5dbe24f6a9a1e6d2713b',
+    description: '삭제자 ID',
+    required: false,
+  })
+  deletedBy?: string;
 }

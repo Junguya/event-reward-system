@@ -20,19 +20,21 @@ export class AuthService {
     this.baseUrl = this.config.getOrThrow<string>('AUTH_SERVICE_URL');
   }
 
-  async signup(dto: SignUpReq): Promise<UserRes> {
+  async signup(signUpReq: SignUpReq): Promise<UserRes> {
     try {
-      const { data } = await lastValueFrom(this.http.post(`${this.baseUrl}/auth/signup`, dto));
+      const { data } = await lastValueFrom(
+        this.http.post(`${this.baseUrl}/auth/signup`, signUpReq),
+      );
       return data;
     } catch (err) {
       handleAxiosError(err);
     }
   }
 
-  async signin(dto: SignInReq): Promise<SignInRes & { refreshToken: string }> {
+  async signin(signInReq: SignInReq): Promise<SignInRes & { refreshToken: string }> {
     try {
       const { data } = await lastValueFrom(
-        this.http.post(`${this.baseUrl}/auth/signin`, dto, {
+        this.http.post(`${this.baseUrl}/auth/signin`, signInReq, {
           withCredentials: true,
         }),
       );

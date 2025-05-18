@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Types } from 'mongoose';
+import { SchemaTypes, Types } from 'mongoose';
 import { BaseDocument } from 'src/common/types/base-document';
 
 export type UserDocument = BaseDocument<User>;
@@ -25,6 +25,7 @@ export class User {
   })
   roles: Types.ObjectId[];
 
+  // 공통 관리 필드
   @Prop({ type: Date, default: null })
   deletedAt: Date;
 
@@ -33,6 +34,9 @@ export class User {
 
   @Prop({ type: Types.ObjectId, ref: 'User', default: null })
   updatedBy: Types.ObjectId;
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'User', default: null })
+  deletedBy: Types.ObjectId;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

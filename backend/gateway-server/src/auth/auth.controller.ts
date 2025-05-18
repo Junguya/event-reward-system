@@ -24,8 +24,8 @@ export class AuthController {
   @ApiOperation({ summary: '회원가입' })
   @ApiBody({ type: SignUpReq })
   @ApiOkResponse({ type: UserRes })
-  signup(@Body() dto: SignUpReq): Promise<UserRes> {
-    return this.authService.signup(dto);
+  signup(@Body() signUpReq: SignUpReq): Promise<UserRes> {
+    return this.authService.signup(signUpReq);
   }
 
   @Post('signin')
@@ -33,10 +33,10 @@ export class AuthController {
   @ApiBody({ type: SignInReq })
   @ApiOkResponse({ type: SignInRes })
   async signin(
-    @Body() dto: SignInReq,
+    @Body() signInReq: SignInReq,
     @Res({ passthrough: true }) res: Response,
   ): Promise<SignInRes> {
-    const { accessToken, refreshToken, user } = await this.authService.signin(dto);
+    const { accessToken, refreshToken, user } = await this.authService.signin(signInReq);
     const expiresIn = this.configService.get<string>('jwt.refreshToken.expiresIn') ?? '7d';
     const maxAge = parseExpiryToMs(expiresIn);
 

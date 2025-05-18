@@ -4,9 +4,9 @@ import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger'
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { CreateUserReq } from './dto/create-user.req';
-import { UpdatePasswordReq } from './dto/update-user-password';
-import { UpdateUserReq } from './dto/update-user-req';
-import { UpdateUserRoleReq } from './dto/update-user-role-req';
+import { UpdatePasswordReq } from './dto/update-user-password.req';
+import { UpdateUserRoleReq } from './dto/update-user-role.req';
+import { UpdateUserReq } from './dto/update-user.req';
 import { UserRes } from './dto/user.res';
 import { UsersService } from './users.service';
 
@@ -20,8 +20,8 @@ export class UsersController {
   @Post()
   @Roles('ADMIN')
   @ApiOperation({ summary: '관리자 전용 유저 생성' })
-  async create(@Body() body: CreateUserReq): Promise<UserRes> {
-    return this.usersService.create(body);
+  async create(@Body() createUserReq: CreateUserReq): Promise<UserRes> {
+    return this.usersService.create(createUserReq);
   }
 
   @Get()
@@ -42,18 +42,18 @@ export class UsersController {
   @Patch('me')
   @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: '유저 정보 수정 (본인만)' })
-  async updateMe(@Body() req: UpdateUserReq, @Req() request: any): Promise<UserRes> {
-    return this.usersService.update(request.user._id, req);
+  async updateMe(@Body() updateUserReq: UpdateUserReq, @Req() request: any): Promise<UserRes> {
+    return this.usersService.update(request.user._id, updateUserReq);
   }
 
   @Patch('me/password')
   @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: '유저 비밀번호 변경 (본인만)' })
   async updatePassword(
-    @Body() req: UpdatePasswordReq,
+    @Body() updatePasswordReq: UpdatePasswordReq,
     @Req() request: any,
   ): Promise<{ message: string }> {
-    await this.usersService.updatePassword(request.user._id, req);
+    await this.usersService.updatePassword(request.user._id, updatePasswordReq);
     return { message: '비밀번호가 변경되었습니다.' };
   }
 
@@ -61,8 +61,11 @@ export class UsersController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('ADMIN') // 관리자만 가능
   @ApiOperation({ summary: '유저 역할 수정 (관리자 전용)' })
-  async updateUserRoles(@Param('id') id: string, @Body() req: UpdateUserRoleReq): Promise<UserRes> {
-    return this.usersService.updateRoles(id, req);
+  async updateUserRoles(
+    @Param('id') id: string,
+    @Body() updateUserRoleReq: UpdateUserRoleReq,
+  ): Promise<UserRes> {
+    return this.usersService.updateRoles(id, updateUserRoleReq);
   }
 
   @Delete(':id')
@@ -71,5 +74,18 @@ export class UsersController {
   @ApiParam({ name: 'id', description: '유저 ID' })
   async delete(@Param('id') id: string): Promise<boolean> {
     return this.usersService.delete(id);
+  }
+}
+
+@ApiTags('INTERNAL USERS')
+@Controller('internal/users')
+export class InternalUsersController {
+  constructor(private readonly usersService: UsersService) {}
+
+  @Get(':id')
+  @ApiOperation({ summary: '유저 단건 조회 (내부 호출 전용)' })
+  @ApiParam({ name: 'id', description: '유저 ID (ObjectId)' })
+  async findByIdInternal(@Param('id') id: string) {
+    return this.usersService.findById(id);
   }
 }

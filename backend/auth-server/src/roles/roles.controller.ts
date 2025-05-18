@@ -20,8 +20,8 @@ export class RolesController {
   @ApiOperation({ summary: '역할 생성 (ADMIN만 가능)' })
   @ApiBody({ type: CreateRoleReq })
   @ApiResponse({ status: 201, description: '역할 생성 성공', type: RoleRes })
-  async create(@Body() req: CreateRoleReq): Promise<RoleRes> {
-    return this.rolesService.create(req);
+  async create(@Body() createRoleReq: CreateRoleReq): Promise<RoleRes> {
+    return this.rolesService.create(createRoleReq);
   }
 
   @Get()
@@ -37,8 +37,8 @@ export class RolesController {
   @ApiOperation({ summary: '역할 수정 (ADMIN만 가능)' })
   @ApiBody({ type: UpdateRoleReq })
   @ApiResponse({ status: 200, description: '역할 수정 성공', type: RoleRes })
-  async update(@Param('id') id: string, @Body() req: UpdateRoleReq): Promise<RoleRes> {
-    return this.rolesService.update(id, req);
+  async update(@Param('id') id: string, @Body() updateRoleReq: UpdateRoleReq): Promise<RoleRes> {
+    return this.rolesService.update(id, updateRoleReq);
   }
 
   @Delete(':id')

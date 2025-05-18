@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString, Matches } from 'class-validator';
 
-export class ChangePasswordReq {
+export class UpdatePasswordReq {
   @ApiProperty({ example: 'OldPass123!' })
   @IsNotEmpty()
   @IsString()

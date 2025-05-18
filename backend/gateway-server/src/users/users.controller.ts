@@ -24,9 +24,9 @@ export class UsersController {
   @Post()
   @Roles('ADMIN')
   @ApiOperation({ summary: '관리자 전용 유저 생성' })
-  create(@Req() req: Request, @Body() dto: CreateUserReq): Promise<UserRes> {
+  create(@Req() req: Request, @Body() createUserReq: CreateUserReq): Promise<UserRes> {
     const accessToken = extractAccessToken(req);
-    return this.usersService.create(dto, accessToken);
+    return this.usersService.create(createUserReq, accessToken);
   }
 
   @Get()
@@ -49,9 +49,9 @@ export class UsersController {
   @Patch('me')
   @UseGuards(JwtAuthGuard) // 본인만
   @ApiOperation({ summary: '유저 정보 수정 (본인만)' })
-  updateMe(@Req() req: Request, @Body() dto: UpdateUserReq): Promise<UserRes> {
+  updateMe(@Req() req: Request, @Body() updateUserReq: UpdateUserReq): Promise<UserRes> {
     const accessToken = extractAccessToken(req);
-    return this.usersService.updateMe(dto, accessToken);
+    return this.usersService.updateMe(updateUserReq, accessToken);
   }
 
   @Patch('me/password')
@@ -59,10 +59,10 @@ export class UsersController {
   @ApiOperation({ summary: '유저 비밀번호 변경 (본인만)' })
   updatePassword(
     @Req() req: Request,
-    @Body() dto: UpdatePasswordReq,
+    @Body() updatePasswordReq: UpdatePasswordReq,
   ): Promise<{ message: string }> {
     const accessToken = extractAccessToken(req);
-    return this.usersService.updatePassword(dto, accessToken);
+    return this.usersService.updatePassword(updatePasswordReq, accessToken);
   }
 
   @Patch(':id/roles')
@@ -71,10 +71,10 @@ export class UsersController {
   updateUserRoles(
     @Req() req: Request,
     @Param('id') id: string,
-    @Body() dto: UpdateUserRoleReq,
+    @Body() updateUserRoleReq: UpdateUserRoleReq,
   ): Promise<UserRes> {
     const accessToken = extractAccessToken(req);
-    return this.usersService.updateRoles(id, dto, accessToken);
+    return this.usersService.updateRoles(id, updateUserRoleReq, accessToken);
   }
 
   @Delete(':id')

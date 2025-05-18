@@ -11,6 +11,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalAuthGuard } from './strategies/local-auth.guard';
 import { LocalStrategy } from './strategies/local.strategy';
 
+import { HttpModule } from '@nestjs/axios';
 import { JwtConfigService } from '../config/jwt.config';
 import { UsersModule } from '../users/users.module';
 import { RefreshToken, RefreshTokenSchema } from './schemas/refresh-token.schema';
@@ -24,6 +25,8 @@ import { RefreshToken, RefreshTokenSchema } from './schemas/refresh-token.schema
     }),
     MongooseModule.forFeature([{ name: RefreshToken.name, schema: RefreshTokenSchema }]),
     UsersModule,
+    HttpModule,
+    ConfigModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtConfigService, LocalStrategy, LocalAuthGuard, JwtStrategy],

@@ -7,11 +7,6 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
 
-  app.enableCors({
-    origin: 'http://localhost:3003', // 프론트 주소
-    credentials: true, // withCredentials 허용
-  });
-
   const config = new DocumentBuilder()
     .setTitle('이벤트 보상 시스템 Auth API')
     .setDescription('이벤트 보상 시스템 유저 및 역할 관리 API 명세서')

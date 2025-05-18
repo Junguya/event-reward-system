@@ -28,10 +28,10 @@ export class RolesService {
     }
   }
 
-  async create(dto: CreateRoleReq, accessToken: string): Promise<RoleRes> {
+  async create(createRoleReq: CreateRoleReq, accessToken: string): Promise<RoleRes> {
     try {
       const { data } = await lastValueFrom(
-        this.http.post<RoleRes>(`${this.authBaseUrl}/roles`, dto, {
+        this.http.post<RoleRes>(`${this.authBaseUrl}/roles`, createRoleReq, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
@@ -43,10 +43,10 @@ export class RolesService {
     }
   }
 
-  async update(id: string, dto: UpdateRoleReq, accessToken: string): Promise<RoleRes> {
+  async update(id: string, updateRoleReq: UpdateRoleReq, accessToken: string): Promise<RoleRes> {
     try {
       const { data } = await lastValueFrom(
-        this.http.patch<RoleRes>(`${this.authBaseUrl}/roles/${id}`, dto, {
+        this.http.patch<RoleRes>(`${this.authBaseUrl}/roles/${id}`, updateRoleReq, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },

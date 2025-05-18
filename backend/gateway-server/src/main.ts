@@ -9,6 +9,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
 
+  app.enableCors({
+    origin: 'http://localhost:3003', // 프론트 주소
+    credentials: true, // withCredentials 허용
+  });
+
   // 쿠키 파서 등록
   app.use(cookieParser());
 

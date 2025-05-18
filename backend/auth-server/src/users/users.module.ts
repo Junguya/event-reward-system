@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Role, RoleSchema } from '../roles/schemas/role.schema'; // ✅ 추가
 import { User, UserSchema } from './schemas/user.schema';
-import { UsersController } from './users.controller';
+import { InternalUsersController, UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
 @Module({
@@ -13,7 +13,7 @@ import { UsersService } from './users.service';
     ]),
   ],
   providers: [UsersService],
-  controllers: [UsersController],
+  controllers: [UsersController, InternalUsersController],
   exports: [UsersService],
 })
 export class UsersModule {}

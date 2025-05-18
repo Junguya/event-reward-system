@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Document, SchemaTypes, Types } from 'mongoose';
 
 export type RefreshTokenDocument = RefreshToken & Document;
 
@@ -16,6 +16,18 @@ export class RefreshToken {
 
   @Prop({ default: false })
   isRevoked: boolean;
+
+  @Prop({ type: Date, default: null })
+  deletedAt: Date;
+
+  @Prop({ type: Types.ObjectId, ref: 'User', default: null })
+  createdBy: Types.ObjectId;
+
+  @Prop({ type: Types.ObjectId, ref: 'User', default: null })
+  updatedBy: Types.ObjectId;
+
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'User', default: null })
+  deletedBy: Types.ObjectId;
 }
 
 export const RefreshTokenSchema = SchemaFactory.createForClass(RefreshToken);

@@ -30,26 +30,26 @@ export class RolesService {
     }
   }
 
-  async create(req: CreateRoleReq): Promise<RoleRes> {
-    const created = new this.roleModel(req);
-    const saved = await created.save();
-    const { _id, __v, ...rest } = saved.toObject();
+  private toRoleRes(doc: RoleDocument): RoleRes {
+    const { _id, __v, ...rest } = doc.toObject();
     return { id: _id.toString(), ...rest };
+  }
+
+  async create(createRoleReq: CreateRoleReq): Promise<RoleRes> {
+    const created = new this.roleModel(createRoleReq);
+    const saved = await created.save();
+    return this.toRoleRes(saved);
   }
 
   async findAll(): Promise<RoleRes[]> {
-    const roles = await this.roleModel.find().lean();
-    return roles.map(({ _id, __v, ...rest }) => ({
-      id: _id.toString(),
-      ...rest,
-    }));
+    const roles = await this.roleModel.find({ deletedAt: null }).sort({ createdAt: -1 }).exec();
+    return roles.map(role => this.toRoleRes(role));
   }
 
-  async update(id: string, req: UpdateRoleReq): Promise<RoleRes> {
-    const updated = await this.roleModel.findByIdAndUpdate(id, req, { new: true });
+  async update(id: string, updateRoleReq: UpdateRoleReq): Promise<RoleRes> {
+    const updated = await this.roleModel.findByIdAndUpdate(id, updateRoleReq, { new: true });
     if (!updated) throw new NotFoundException('역할을 찾을 수 없습니다.');
-    const { _id, __v, ...rest } = updated.toObject();
-    return { id: _id.toString(), ...rest };
+    return this.toRoleRes(updated);
   }
 
   async delete(id: string): Promise<boolean> {

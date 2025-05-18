@@ -53,7 +53,12 @@ export default tseslint.config(
       'import/order': [
         'warn',
         {
-          groups: ['builtin', 'external', 'internal', ['parent', 'sibling', 'index']],
+          groups: [
+            'builtin',
+            'external',
+            'internal',
+            ['parent', 'sibling', 'index'],
+          ],
           alphabetize: { order: 'asc', caseInsensitive: true },
           'newlines-between': 'always',
         },

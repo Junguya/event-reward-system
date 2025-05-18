@@ -29,9 +29,6 @@ export class SignInRes {
   @ApiProperty({ example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6...', description: 'Access Token (JWT)' })
   accessToken: string;
 
-  @ApiProperty({ example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6...', description: 'Refresh Token (JWT)' })
-  refreshToken: string;
-
   @ApiProperty({ type: UserData })
   user: UserData;
 }

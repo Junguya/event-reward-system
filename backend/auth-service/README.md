@@ -40,4 +40,4 @@ npm run start:dev
 
 ### 4. Swagger API 문서
 
-[http://localhost:3000/docs](http://localhost:3000/docs)
+[http://localhost:3001/docs](http://localhost:3001/docs)

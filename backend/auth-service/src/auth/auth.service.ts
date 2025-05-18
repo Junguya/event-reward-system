@@ -85,11 +85,13 @@ export class AuthService {
     };
   }
 
-  async revokeRefreshToken(token: string): Promise<void> {
-    await this.refreshTokenModel.findOneAndUpdate({ token }, { isRevoked: true });
+  async revokeRefreshToken(token: string): Promise<boolean> {
+    const result = await this.refreshTokenModel.findOneAndUpdate({ token }, { isRevoked: true });
+
+    return !!result;
   }
 
-  async refreshTokens(refreshToken: string): Promise<RefreshTokenRes> {
+  async reissueAccessToken(refreshToken: string): Promise<RefreshTokenRes> {
     const savedToken = await this.refreshTokenModel.findOne({ token: refreshToken });
 
     if (!savedToken || savedToken.isRevoked) {

@@ -1,27 +1,48 @@
-// src/config/jwt.config.ts
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtModuleOptions, JwtOptionsFactory } from '@nestjs/jwt';
 
 @Injectable()
 export class JwtConfigService implements JwtOptionsFactory {
-  constructor(private config: ConfigService) {}
+  constructor(private readonly configService: ConfigService) {}
 
   createJwtOptions(): JwtModuleOptions {
     return {
-      secret: this.config.get<string>('JWT_SECRET'),
+      secret: this.getJwtSecret(),
       signOptions: {
-        expiresIn: this.config.get<string>('JWT_ACCESS_EXPIRE_TIME', '10h'), // Access 토큰 만료 시간
+        expiresIn: this.getAccessTokenExpiry(),
       },
     };
   }
 
-  getRefreshTokenOptions(): JwtModuleOptions {
+  getAccessTokenOptions() {
     return {
-      secret: this.config.get<string>('JWT_SECRET'),
-      signOptions: {
-        expiresIn: this.config.get<string>('JWT_REFRESH_EXPIRE_TIME', '30d'),
-      },
+      secret: this.getJwtSecret(),
+      expiresIn: this.getAccessTokenExpiry(),
     };
+  }
+
+  getRefreshTokenOptions() {
+    return {
+      secret: this.getJwtSecret(),
+      expiresIn: this.getRefreshTokenExpiry(),
+    };
+  }
+
+  // 내부 보호 메서드들
+  private getJwtSecret(): string {
+    const secret = this.configService.get<string>('JWT_SECRET');
+    if (!secret) {
+      throw new Error('환경 변수 JWT_SECRET이 설정되지 않았습니다.');
+    }
+    return secret;
+  }
+
+  private getAccessTokenExpiry(): string {
+    return this.configService.get<string>('JWT_ACCESS_EXPIRE_TIME') || '1h';
+  }
+
+  private getRefreshTokenExpiry(): string {
+    return this.configService.get<string>('JWT_REFRESH_EXPIRE_TIME') || '7d';
   }
 }

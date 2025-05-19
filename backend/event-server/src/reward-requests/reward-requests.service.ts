@@ -180,7 +180,7 @@ export class RewardRequestsService {
       case 'INVITE_FRIENDS':
         return userStats.inviteCount >= value;
       case 'TOTAL_POINTS':
-        return userStats.inviteCount >= value;
+        return userStats.point >= value;
       default:
         return false;
     }

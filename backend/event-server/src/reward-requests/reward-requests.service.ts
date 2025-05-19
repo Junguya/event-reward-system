@@ -179,6 +179,8 @@ export class RewardRequestsService {
         return userStats.loginDays >= value;
       case 'INVITE_FRIENDS':
         return userStats.inviteCount >= value;
+      case 'TOTAL_POINTS':
+        return userStats.inviteCount >= value;
       default:
         return false;
     }

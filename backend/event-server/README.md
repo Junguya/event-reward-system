@@ -1,10 +1,12 @@
+<!-- markdownlint-disable MD033 -->
+
 # Event Server
 
 NestJS 기반 이벤트 및 보상 처리 서비스입니다.
 이벤트 등록, 보상 등록, 유저의 보상 요청 처리 및 통계 관리 기능을 제공합니다.
 
-## 프로젝트 구조
-
+<details>
+<summary>## 프로젝트 구조</summary>
 src/
 ├── events/ # 이벤트 등록, 조회, 수정, 삭제
 ├── rewards/ # 보상 등록, 조회, 수정, 삭제
@@ -14,6 +16,7 @@ src/
 ├── common/ # 공통 유틸, 예외, 인터페이스 등
 ├── config/ # 환경 설정
 └── main.ts # 앱 진입점
+</details>
 
 ## 실행 방법
 

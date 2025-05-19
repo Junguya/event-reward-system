@@ -1,9 +1,11 @@
+<!-- markdownlint-disable MD033 -->
 # Event Reward System (Nexon Assignment)
 
 NestJS 기반 마이크로서비스 아키텍처로 구현된 **이벤트 보상 시스템**입니다.
 인증 서버(auth-server), 게이트웨이 서버(gateway-server), 이벤트 서버(event-server)로 구성되어 있으며, MongoDB를 기반으로 데이터 저장소를 운영합니다.
 
-## 프로젝트 구조
+<details>
+<summary>## 프로젝트 구조</summary>
 
 event-reward-system/backend
 ├── auth-server/ # 인증 및 유저/역할 관리 서비스
@@ -12,6 +14,7 @@ event-reward-system/backend
 ├── docker-compose.yml # 전체 서비스 구성용 Docker Compose
 ├── .env # 루트 공통 환경 변수 설정
 └── README.md # 프로젝트 설명 파일 (현재 문서)
+</details>
 
 ## 실행 방법 (Docker 기반)
 

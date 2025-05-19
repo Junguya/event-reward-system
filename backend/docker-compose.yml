@@ -5,14 +5,13 @@ services:
     image: mongo:6.0
     container_name: mongodb
     ports:
-      - "27017:27017"  # MongoDB 포트
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root  # 관리자 계정
-      MONGO_INITDB_ROOT_PASSWORD: password  # 관리자 비밀번호
+      - "27017:27017"
+    command: ["--replSet", "rs0"]
     volumes:
-      - mongo-data:/data/db  # 데이터 저장소
-    restart: unless-stopped  # Docker가 종료되면 자동으로 다시 시작
+      - mongo-data:/data/db
+      - ./mongo-init:/docker-entrypoint-initdb.d
+    restart: unless-stopped
 
 volumes:
   mongo-data:
-    driver: local  # 로컬 디스크에 데이터 저장
+    driver: local

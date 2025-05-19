@@ -2,24 +2,27 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { SchemaTypes, Types } from 'mongoose';
 import { BaseDocument } from 'src/common/types/base-document';
 
-export type UserStatsDocument = BaseDocument<UserStats>;
+export type CouponDocument = BaseDocument<Coupon>;
 
-@Schema({ collection: 'user_stats', timestamps: true })
-export class UserStats {
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'User', required: true, unique: true })
+@Schema({ timestamps: true })
+export class Coupon {
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'User', required: true })
   userId: Types.ObjectId;
 
-  @Prop({ type: Number, default: 0 })
-  point: number;
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Reward', required: true })
+  rewardId: Types.ObjectId;
 
-  @Prop({ type: Number, default: 0 })
-  loginDays: number;
+  @Prop({ type: String, required: true, unique: true })
+  code: string;
 
-  @Prop({ type: Number, default: 0 })
-  inviteCount: number;
+  @Prop({ type: Boolean, default: false })
+  used: boolean;
 
   @Prop({ type: Date, default: null })
-  lastLoginAt: Date;
+  usedAt: Date;
+
+  @Prop({ type: Date, default: null })
+  expiresAt: Date;
 
   // 공통 관리 필드
   @Prop({ type: Date, default: null })
@@ -35,4 +38,4 @@ export class UserStats {
   deletedBy: Types.ObjectId;
 }
 
-export const UserStatsSchema = SchemaFactory.createForClass(UserStats);
+export const CouponSchema = SchemaFactory.createForClass(Coupon);

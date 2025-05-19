@@ -4,7 +4,7 @@ import { BaseDocument } from 'src/common/types/base-document';
 
 export type RewardRequestDocument = BaseDocument<RewardRequest>;
 
-@Schema({ timestamps: true })
+@Schema({ collection: 'user_requests', timestamps: true })
 export class RewardRequest {
   @Prop({ type: SchemaTypes.ObjectId, ref: 'Event', required: true })
   event: Types.ObjectId;

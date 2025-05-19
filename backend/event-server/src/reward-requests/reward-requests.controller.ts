@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { DevAuthGuard } from 'src/common/guards/dev-auth.guard';
 import { AuthenticatedRequest } from 'src/common/types/authenticated-request.interface';
 import { CreateRewardRequestReq } from './dto/create-reward-request.req';
+import { FilterRewardRequestQuery } from './dto/filter-reward-request.query';
 import { RewardRequestRes } from './dto/reward-request.res';
 import { RewardRequestsService } from './reward-requests.service';
 
@@ -27,11 +28,13 @@ export class RewardRequestsController {
   }
 
   @Get()
-  @Roles('USER', 'OPERATOR', 'AUDITOR', 'ADMIN')
   @ApiOperation({ summary: '보상 요청 내역 조회' })
   @ApiResponse({ status: 200, type: RewardRequestRes, isArray: true })
-  async findAll(@Req() req: AuthenticatedRequest): Promise<RewardRequestRes[]> {
+  async findAll(
+    @Req() req: AuthenticatedRequest,
+    @Query() filter: FilterRewardRequestQuery,
+  ): Promise<RewardRequestRes[]> {
     const isUser = req.user.roles.includes('USER');
-    return this.rewardRequestsService.findAll(req.user, isUser);
+    return this.rewardRequestsService.findAll(req.user, isUser, filter);
   }
 }

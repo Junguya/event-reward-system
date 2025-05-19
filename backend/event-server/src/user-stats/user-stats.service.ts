@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { ClientSession, Model } from 'mongoose';
 import { UserStatsRes } from './dto/user-stats.res';
 import { UserStats, UserStatsDocument } from './schemas/user-stats.schema';
 
@@ -27,6 +27,14 @@ export class UserStatsService {
     const stats = await this.userStatsModel.findOne({ userId, deletedAt: null }).exec();
     if (!stats) throw new NotFoundException('해당 유저의 통계 정보를 찾을 수 없습니다.');
     return this.toUserStatsRes(stats);
+  }
+
+  async addPoint(userId: string, amount: number, session?: ClientSession) {
+    return this.userStatsModel.findOneAndUpdate(
+      { userId },
+      { $inc: { point: amount } },
+      { new: true, upsert: true, session },
+    );
   }
 
   async createIfNotExists(userId: string, operatorId: string): Promise<UserStatsDocument> {

@@ -28,6 +28,14 @@ export class EventInfo {
   title: string;
 }
 
+class CouponBrief {
+  @ApiProperty({ example: 'CP-ABC12345' })
+  code: string;
+
+  @ApiProperty({ example: '2025-06-30T00:00:00Z', required: false })
+  expiresAt: string | null;
+}
+
 export class RewardInfo {
   @ApiProperty({ example: '66514d7f205c4cbefaf94615' })
   id: string;
@@ -37,6 +45,13 @@ export class RewardInfo {
 
   @ApiProperty({ example: 100 })
   amount: number;
+
+  @ApiProperty({
+    type: [CouponBrief],
+    required: false,
+    description: '쿠폰 보상일 경우 발급된 쿠폰 목록',
+  })
+  coupons?: CouponBrief[];
 }
 
 export class RewardRequestRes {

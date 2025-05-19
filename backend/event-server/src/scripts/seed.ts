@@ -49,7 +49,7 @@ async function bootstrap() {
   }
 
   // 2. 이벤트 생성
-  const event = await eventsService.create(
+  const loginEvent = await eventsService.create(
     {
       title: '3일 이상 로그인 시 보상',
       description: '유저가 3일 이상 로그인하면 5000포인트를 지급합니다.',
@@ -66,7 +66,24 @@ async function bootstrap() {
     adminId,
   );
 
-  Logger.log(`이벤트 생성 완료: ${event.title}`, 'Seed');
+  const pointEvent = await eventsService.create(
+    {
+      title: '누적 포인트 5000 이상 시 보상',
+      description: '누적 포인트가 5000 이상인 유저에게 쿠폰을 지급합니다.',
+      period: {
+        start: new Date('2025-01-01').toISOString(),
+        end: new Date('2099-12-31').toISOString(),
+      },
+      condition: {
+        type: 'TOTAL_POINTS',
+        value: 5000,
+      },
+      status: 'ACTIVE',
+    },
+    adminId,
+  );
+
+  Logger.log(`이벤트 생성 완료: ${loginEvent.title} ${pointEvent.title}`, 'Seed');
 
   // 3. 포인트 보상 등록
   await rewardsService.create(
@@ -74,7 +91,17 @@ async function bootstrap() {
       type: 'POINT',
       amount: 5000,
       description: '3일 로그인 보상 포인트',
-      event: event.id,
+      event: loginEvent.id,
+    },
+    adminId,
+  );
+
+  await rewardsService.create(
+    {
+      type: 'COUPON',
+      amount: 1,
+      description: '누적 포인트 5000 이상 쿠폰',
+      event: pointEvent.id,
     },
     adminId,
   );

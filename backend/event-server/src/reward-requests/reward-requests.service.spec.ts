@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Model } from 'mongoose';
+import { UserRewardsService } from 'src/user-rewards/user-rewards.service';
 import { UserStatsDocument } from 'src/user-stats/schemas/user-stats.schema';
 import { Event } from '../events/schemas/event.schema';
 import { Reward } from '../rewards/schemas/reward.schema';
@@ -18,15 +19,26 @@ describe('RewardRequestsService - requestReward()', () => {
   let userStatsService: UserStatsService;
   let userStatsModel: Model<UserStatsDocument>;
 
+  const rewardRequestModelMock = jest.fn().mockImplementation(dto => ({
+    ...dto,
+    save: jest.fn().mockResolvedValue({
+      _id: 'reqId',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }),
+  })) as any;
+  rewardRequestModelMock.create = jest.fn();
+  rewardRequestModelMock.findOne = jest.fn().mockReturnValue({
+    exec: jest.fn().mockResolvedValue(null),
+  });
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RewardRequestsService,
         {
           provide: getModelToken('RewardRequest'),
-          useValue: {
-            create: jest.fn(),
-          },
+          useValue: rewardRequestModelMock,
         },
         {
           provide: getModelToken('Event'),
@@ -37,6 +49,10 @@ describe('RewardRequestsService - requestReward()', () => {
                 status: 'ACTIVE',
                 deletedAt: null,
                 condition: { type: 'LOGIN_DAYS', value: 3 },
+                period: {
+                  start: new Date('2020-01-01').toISOString(),
+                  end: new Date('2099-12-31').toISOString(),
+                },
               }),
             }),
           },
@@ -47,10 +63,29 @@ describe('RewardRequestsService - requestReward()', () => {
             findOne: jest.fn().mockReturnValue({
               exec: jest.fn().mockResolvedValue({
                 _id: 'rewardId',
+
                 type: 'POINT',
                 deletedAt: null,
               }),
             }),
+          },
+        },
+        {
+          provide: getModelToken('UserStats'),
+          useValue: {
+            findOne: jest.fn(),
+          },
+        },
+        {
+          provide: getModelToken('Coupon'),
+          useValue: {
+            find: jest.fn(),
+          },
+        },
+        {
+          provide: UserRewardsService,
+          useValue: {
+            grantReward: jest.fn(),
           },
         },
         {
@@ -64,11 +99,24 @@ describe('RewardRequestsService - requestReward()', () => {
         },
         {
           provide: HttpService,
-          useValue: {},
+          useValue: {
+            axiosRef: {
+              get: jest.fn().mockResolvedValue({
+                data: {
+                  id: 'userId',
+                  name: 'Test User',
+                  email: 'test@example.com',
+                  roles: [{ name: 'USER' }],
+                },
+              }),
+            },
+          },
         },
         {
           provide: ConfigService,
-          useValue: {},
+          useValue: {
+            getOrThrow: jest.fn().mockReturnValue('http://auth-service'),
+          },
         },
       ],
     }).compile();
@@ -101,7 +149,46 @@ describe('RewardRequestsService - requestReward()', () => {
       createdAt: new Date(),
     };
 
-    jest.spyOn(rewardRequestModel, 'create').mockResolvedValue(mockCreatedRewardRequest as any);
+    // 추가: 유저 통계 mock (조건 충족)
+    jest.spyOn(userStatsModel, 'findOne').mockReturnValue({
+      exec: jest.fn().mockResolvedValue({
+        loginDays: 5,
+        point: 0,
+      }),
+    } as any);
+
+    // 추가: 유저 정보 mock
+    const mockUser = {
+      id: 'userId',
+      name: 'Test User',
+      email: 'test@example.com',
+      roles: [{ name: 'USER' }],
+    };
+    (service as any).httpService = {
+      axiosRef: {
+        get: jest.fn().mockResolvedValue({ data: mockUser }),
+      },
+    };
+
+    // 추가: 중복 요청 없음
+    jest.spyOn(rewardRequestModel, 'findOne').mockReturnValue({
+      exec: jest.fn().mockResolvedValue(null),
+    } as any);
+
+    // 추가: userRewardsService.grantReward mock
+    (service as any).userRewardsService = {
+      grantReward: jest.fn().mockResolvedValue({ coupons: [] }),
+    };
+
+    // 수정: 요청 이력 생성 → save() 포함해야 함
+    jest.spyOn(rewardRequestModel, 'create').mockImplementation((dto: any) => ({
+      ...dto,
+      save: jest.fn().mockResolvedValue({
+        _id: 'reqId',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }),
+    }));
 
     const result = await service.requestReward(createRewardRequestReq, userTokenPayload);
 

@@ -1,6 +1,6 @@
 import { Body, Controller, HttpCode, Post, Req, Res, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 
 import { AuthService } from './auth.service';
@@ -51,6 +51,7 @@ export class AuthController {
   }
 
   @Post('signout')
+  @ApiBearerAuth('access-token')
   @HttpCode(200)
   @ApiOperation({ summary: '로그아웃 (Refresh 토큰 제거)' })
   async signout(@Req() req: Request, @Res({ passthrough: true }) res: Response): Promise<void> {
@@ -70,6 +71,7 @@ export class AuthController {
   }
 
   @Post('token/refresh')
+  @ApiBearerAuth('access-token')
   @HttpCode(200)
   @ApiOperation({ summary: 'Access Token 재발급' })
   @ApiOkResponse({ type: RefreshTokenRes })

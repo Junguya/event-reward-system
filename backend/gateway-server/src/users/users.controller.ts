@@ -23,7 +23,7 @@ export class UsersController {
 
   @Post()
   @Roles('ADMIN')
-  @ApiOperation({ summary: '관리자 전용 유저 생성' })
+  @ApiOperation({ summary: '유저 생성 (관리자)' })
   create(@Req() req: Request, @Body() createUserReq: CreateUserReq): Promise<UserRes> {
     const accessToken = extractAccessToken(req);
     return this.usersService.create(createUserReq, accessToken);
@@ -67,7 +67,7 @@ export class UsersController {
 
   @Patch(':id/roles')
   @Roles('ADMIN')
-  @ApiOperation({ summary: '유저 역할 수정 (관리자 전용)' })
+  @ApiOperation({ summary: '유저 역할 수정 (관리자)' })
   updateUserRoles(
     @Req() req: Request,
     @Param('id') id: string,
@@ -79,7 +79,7 @@ export class UsersController {
 
   @Delete(':id')
   @Roles('ADMIN')
-  @ApiOperation({ summary: '관리자 전용 유저 삭제' })
+  @ApiOperation({ summary: '유저 삭제 (관리자)' })
   @ApiParam({ name: 'id', description: '유저 ID' })
   remove(@Req() req: Request, @Param('id') id: string): Promise<boolean> {
     const accessToken = extractAccessToken(req);

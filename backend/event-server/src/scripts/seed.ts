@@ -7,27 +7,44 @@ import { AppModule } from '../app.module';
 import { EventsService } from '../events/events.service';
 import { RewardsService } from '../rewards/rewards.service';
 
+async function waitForAdminUser(authServiceURL: string, email: string): Promise<string> {
+  const maxRetries = 10;
+  const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const { data } = await axios.get(`${authServiceURL}/internal/admin`, {
+        params: { email },
+      });
+
+      Logger.log(`관리자 유저 확인됨: ${data.id}`, 'Seed');
+      return data.id;
+    } catch (err) {
+      Logger.warn(`관리자 유저 조회 대기 중... (${i + 1}/${maxRetries})`, 'Seed');
+      await delay(3000); // 3초 대기 후 재시도
+    }
+  }
+
+  throw new Error(`관리자 유저(${email})가 일정 시간 내에 조회되지 않았습니다.`);
+}
+
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
-
   const eventsService = app.get(EventsService);
   const rewardsService = app.get(RewardsService);
   const configService = app.get(ConfigService);
 
   Logger.log('이벤트 및 보상 시드 데이터 생성 시작', 'Seed');
 
-  // 1. 관리자 ID를 auth-server의 내부 API로부터 가져옴
-  const authServiceURL = configService.get<string>('AUTH_SERVICE_URL');
+  // 1. 관리자 ID 대기 & 조회
+  const authServiceURL = configService.get<string>('AUTH_SERVICE_URL') || 'http://auth-server:3001';
+  const adminEmail = 'admin@nexon.com';
 
   let adminId: string;
   try {
-    const { data } = await axios.get('http://localhost:3001/internal/admin', {
-      params: { email: 'admin@nexon.com' },
-    });
-    adminId = data.id;
-    Logger.log(`관리자 유저 ID 조회 완료: ${adminId}`, 'Seed');
+    adminId = await waitForAdminUser(authServiceURL, adminEmail);
   } catch (err) {
-    Logger.error('관리자 유저 ID 조회 실패', err);
+    Logger.error(err.message, 'Seed');
     process.exit(1);
   }
 

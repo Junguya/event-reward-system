@@ -31,7 +31,7 @@ export class RolesController {
 
   @Get()
   @Roles('ADMIN')
-  @ApiOperation({ summary: '역할 목록 조회 (ADMIN만 가능)' })
+  @ApiOperation({ summary: '역할 목록 조회 (관리자)' })
   @ApiOkResponse({ type: [RoleRes] })
   findAll(@Req() req: Request): Promise<RoleRes[]> {
     const rawHeader = req.headers.authorization;
@@ -42,7 +42,7 @@ export class RolesController {
 
   @Post()
   @Roles('ADMIN')
-  @ApiOperation({ summary: '역할 생성 (ADMIN만 가능)' })
+  @ApiOperation({ summary: '역할 생성 (관리자)' })
   @ApiOkResponse({ type: RoleRes })
   create(@Req() req: Request, @Body() createRoleReq: CreateRoleReq): Promise<RoleRes> {
     const accessToken = extractAccessToken(req);
@@ -52,7 +52,7 @@ export class RolesController {
 
   @Patch(':id')
   @Roles('ADMIN')
-  @ApiOperation({ summary: '역할 수정 (ADMIN만 가능)' })
+  @ApiOperation({ summary: '역할 수정 (관리자)' })
   @ApiOkResponse({ type: RoleRes })
   update(
     @Req() req: Request,
@@ -66,7 +66,7 @@ export class RolesController {
 
   @Delete(':id')
   @Roles('ADMIN')
-  @ApiOperation({ summary: '역할 삭제 (ADMIN만 가능)' })
+  @ApiOperation({ summary: '역할 삭제 (관리자)' })
   @ApiOkResponse({ type: Boolean })
   remove(@Req() req: Request, @Param('id') id: string): Promise<boolean> {
     const accessToken = extractAccessToken(req);

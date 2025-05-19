@@ -101,6 +101,12 @@ services:
       dockerfile: Dockerfile
     container_name: auth-seed
     command: npm run seed
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/auth_server?replicaSet=rs0
+      - JWT_SECRET=bdf6c7bf41706a34d7e6b220ce86a3fce8c65d532c70be68fa49b520916ceba8
+      - JWT_ACCESS_EXPIRE_TIME=1h
+      - JWT_REFRESH_EXPIRE_TIME=7d
+      - EVENT_SERVICE_URL=http://event-server:3002
     depends_on:
       auth-server:
         condition: service_started
@@ -115,8 +121,12 @@ services:
       dockerfile: Dockerfile
     container_name: event-seed
     command: npm run seed
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/event_server?replicaSet=rs0
+      - JWT_SECRET=bdf6c7bf41706a34d7e6b220ce86a3fce8c65d532c70be68fa49b520916ceba8
+      - AUTH_SERVICE_URL=http://auth-server:3001
     depends_on:
-      auth-server:
+      event-server:
         condition: service_started
     networks:
       - app-net

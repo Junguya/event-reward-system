@@ -45,17 +45,31 @@ export class RewardRequestsService {
     const event = await this.eventModel.findOne({ _id: eventId, deletedAt: null }).exec();
     if (!event) throw new NotFoundException('이벤트를 찾을 수 없습니다.');
 
-    if (event.status !== 'ACTIVE') {
+    const now = new Date();
+    const isInPeriod =
+      event.period?.start &&
+      event.period?.end &&
+      new Date(event.period.start) <= now &&
+      now <= new Date(event.period.end);
+
+    if (event.status !== 'ACTIVE' || !isInPeriod) {
+      const reason = event.status !== 'ACTIVE' ? '이벤트 비활성화' : '이벤트 기간 아님';
+
       await this.rewardRequestModel.create({
         event: event._id,
         reward: rewardId,
         user: userTokenPayload._id,
         status: 'FAILED',
-        reason: '이벤트 비활성화',
+        reason,
         createdBy: userTokenPayload._id,
         updatedBy: userTokenPayload._id,
       });
-      throw new BadRequestException('이벤트가 활성화되어 있지 않습니다.');
+
+      throw new BadRequestException(
+        event.status !== 'ACTIVE'
+          ? '이벤트가 활성화되어 있지 않습니다.'
+          : '이벤트 기간이 아닙니다.',
+      );
     }
 
     // 2. 보상 조회

@@ -19,7 +19,7 @@ export class RewardsController {
 
   @Post()
   @Roles('OPERATOR', 'ADMIN')
-  @ApiOperation({ summary: '보상 등록 (운영자 이상)' })
+  @ApiOperation({ summary: '보상 등록 (운영자, 관리자)' })
   @ApiResponse({ status: 201, type: RewardRes })
   async create(@Body() createRewardReq: CreateRewardReq, @Req() req: AuthenticatedRequest) {
     return this.rewardsService.create(createRewardReq, req.user._id);
@@ -27,7 +27,7 @@ export class RewardsController {
 
   @Get()
   @Roles('OPERATOR', 'AUDITOR', 'ADMIN')
-  @ApiOperation({ summary: '보상 전체 조회' })
+  @ApiOperation({ summary: '보상 전체 조회 (운영자, 감사자, 관리자)' })
   @ApiResponse({ status: 200, type: RewardRes, isArray: true })
   async findAll() {
     return this.rewardsService.findAll();
@@ -35,7 +35,7 @@ export class RewardsController {
 
   @Get(':id')
   @Roles('OPERATOR', 'AUDITOR', 'ADMIN')
-  @ApiOperation({ summary: '보상 상세 조회' })
+  @ApiOperation({ summary: '보상 상세 조회 (운영자, 감사자, 관리자)' })
   @ApiResponse({ status: 200, type: RewardRes })
   async findById(@Param('id') id: string) {
     return this.rewardsService.findById(id);
@@ -43,7 +43,7 @@ export class RewardsController {
 
   @Patch(':id')
   @Roles('OPERATOR', 'ADMIN')
-  @ApiOperation({ summary: '보상 수정 (운영자 이상)' })
+  @ApiOperation({ summary: '보상 수정 (운영자, 관리자)' })
   @ApiResponse({ status: 200, type: RewardRes })
   async update(
     @Param('id') id: string,
@@ -55,7 +55,7 @@ export class RewardsController {
 
   @Delete(':id')
   @Roles('ADMIN')
-  @ApiOperation({ summary: '보상 삭제 (관리자만, 소프트 삭제)' })
+  @ApiOperation({ summary: '보상 삭제 (관리자, 소프트 삭제)' })
   @ApiResponse({ status: 200, description: '삭제 성공 여부 (true/false)' })
   async delete(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
     return this.rewardsService.softDelete(id, req.user._id);

@@ -20,7 +20,7 @@ export class RewardsController {
 
   @Post()
   @Roles('OPERATOR', 'ADMIN')
-  @ApiOperation({ summary: '보상 등록 (운영자 이상)' })
+  @ApiOperation({ summary: '보상 등록 (운영자, 관리자)' })
   @ApiOkResponse({ type: RewardRes })
   create(@Req() req: Request, @Body() createRewardReq: CreateRewardReq): Promise<RewardRes> {
     const accessToken = extractAccessToken(req);
@@ -29,7 +29,7 @@ export class RewardsController {
 
   @Get()
   @Roles('OPERATOR', 'AUDITOR', 'ADMIN')
-  @ApiOperation({ summary: '보상 전체 조회' })
+  @ApiOperation({ summary: '보상 전체 조회 (운영자, 감사자, 관리자)' })
   @ApiOkResponse({ type: [RewardRes] })
   findAll(@Req() req: Request): Promise<RewardRes[]> {
     const accessToken = extractAccessToken(req);
@@ -38,7 +38,7 @@ export class RewardsController {
 
   @Get(':id')
   @Roles('OPERATOR', 'AUDITOR', 'ADMIN')
-  @ApiOperation({ summary: '보상 상세 조회' })
+  @ApiOperation({ summary: '보상 상세 조회 (운영자, 감사자, 관리자)' })
   @ApiOkResponse({ type: RewardRes })
   findById(@Param('id') id: string, @Req() req: Request): Promise<RewardRes> {
     const accessToken = extractAccessToken(req);
@@ -47,7 +47,7 @@ export class RewardsController {
 
   @Patch(':id')
   @Roles('OPERATOR', 'ADMIN')
-  @ApiOperation({ summary: '보상 수정 (운영자 이상)' })
+  @ApiOperation({ summary: '보상 수정 (운영자, 관리자)' })
   @ApiOkResponse({ type: RewardRes })
   update(
     @Param('id') id: string,
@@ -60,7 +60,7 @@ export class RewardsController {
 
   @Delete(':id')
   @Roles('ADMIN')
-  @ApiOperation({ summary: '보상 삭제 (관리자만, 소프트 삭제)' })
+  @ApiOperation({ summary: '보상 삭제 (관리자, 소프트 삭제)' })
   @ApiOkResponse({ type: Boolean })
   delete(@Param('id') id: string, @Req() req: Request): Promise<boolean> {
     const accessToken = extractAccessToken(req);

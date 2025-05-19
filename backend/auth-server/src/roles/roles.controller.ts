@@ -17,7 +17,7 @@ export class RolesController {
 
   @Post()
   @Roles('ADMIN')
-  @ApiOperation({ summary: '역할 생성 (ADMIN만 가능)' })
+  @ApiOperation({ summary: '역할 생성 (관리자)' })
   @ApiBody({ type: CreateRoleReq })
   @ApiResponse({ status: 201, description: '역할 생성 성공', type: RoleRes })
   async create(@Body() createRoleReq: CreateRoleReq): Promise<RoleRes> {
@@ -26,7 +26,7 @@ export class RolesController {
 
   @Get()
   @Roles('ADMIN')
-  @ApiOperation({ summary: '전체 역할 조회 (ADMIN만 가능)' })
+  @ApiOperation({ summary: '전체 역할 조회 (관리자)' })
   @ApiResponse({ status: 200, description: '역할 목록 조회 성공', type: [RoleRes] })
   async findAll(): Promise<RoleRes[]> {
     return this.rolesService.findAll();
@@ -34,7 +34,7 @@ export class RolesController {
 
   @Patch(':id')
   @Roles('ADMIN')
-  @ApiOperation({ summary: '역할 수정 (ADMIN만 가능)' })
+  @ApiOperation({ summary: '역할 수정 (관리자)' })
   @ApiBody({ type: UpdateRoleReq })
   @ApiResponse({ status: 200, description: '역할 수정 성공', type: RoleRes })
   async update(@Param('id') id: string, @Body() updateRoleReq: UpdateRoleReq): Promise<RoleRes> {
@@ -43,7 +43,7 @@ export class RolesController {
 
   @Delete(':id')
   @Roles('ADMIN')
-  @ApiOperation({ summary: '역할 삭제 (ADMIN만 가능)' })
+  @ApiOperation({ summary: '역할 삭제 (관리자)' })
   @ApiResponse({ status: 200, description: '역할 삭제 성공' })
   async delete(@Param('id') id: string): Promise<{ success: boolean }> {
     await this.rolesService.delete(id);

@@ -26,7 +26,6 @@ export class EventsController {
   }
 
   @Get()
-  @Roles('OPERATOR', 'AUDITOR', 'ADMIN')
   @ApiOperation({ summary: '이벤트 전체 조회' })
   @ApiResponse({ status: 200, type: [EventRes] })
   async findAll(@Req() req: AuthenticatedRequest) {

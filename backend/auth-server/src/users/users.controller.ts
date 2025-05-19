@@ -32,7 +32,7 @@ export class UsersController {
 
   @Post()
   @Roles('ADMIN')
-  @ApiOperation({ summary: '관리자 전용 유저 생성' })
+  @ApiOperation({ summary: '유저 생성 (관리자)' })
   async create(@Body() createUserReq: CreateUserReq): Promise<UserRes> {
     return this.usersService.create(createUserReq);
   }
@@ -73,7 +73,7 @@ export class UsersController {
   @Patch(':id/roles')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('ADMIN') // 관리자만 가능
-  @ApiOperation({ summary: '유저 역할 수정 (관리자 전용)' })
+  @ApiOperation({ summary: '유저 역할 수정 (관리자)' })
   async updateUserRoles(
     @Param('id') id: string,
     @Body() updateUserRoleReq: UpdateUserRoleReq,
@@ -83,7 +83,7 @@ export class UsersController {
 
   @Delete(':id')
   @Roles('ADMIN')
-  @ApiOperation({ summary: '관리자 전용 유저 삭제' })
+  @ApiOperation({ summary: '유저 삭제 (관리자)' })
   @ApiParam({ name: 'id', description: '유저 ID' })
   async delete(@Param('id') id: string): Promise<boolean> {
     return this.usersService.delete(id);

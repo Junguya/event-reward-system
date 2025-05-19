@@ -127,48 +127,48 @@ export class RewardRequestsService {
         updatedBy: user.id,
       });
       throw new BadRequestException('이벤트 조건을 충족하지 않았습니다.');
+    } else {
+      // 6. 쿠폰 번호 생성
+      const grantReward = await this.userRewardsService.grantReward(user.id, reward);
+
+      // 7. 요청 이력 저장
+      const created = new this.rewardRequestModel({
+        event: event._id,
+        reward: reward._id,
+        user: user.id,
+        status: 'SUCCESS',
+        createdBy: user.id,
+        updatedBy: user.id,
+      });
+      const saved = await created.save();
+
+      // 8. 응답 구성
+      return {
+        id: saved._id.toString(),
+        event: {
+          id: event._id.toString(),
+          title: event.title,
+        },
+        reward: {
+          id: reward._id.toString(),
+          type: reward.type,
+          amount: reward.amount,
+          coupons: grantReward.coupons,
+        },
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          roles: user.roles.map((role: any) => role.name),
+        },
+        status: created.status,
+        reason: created.reason,
+        createdBy: user.id,
+        updatedBy: user.id,
+        createdAt: saved.createdAt.toISOString(),
+        updatedAt: saved.updatedAt?.toISOString(),
+      };
     }
-
-    // 6. 지급 실행
-    const grantReward = await this.userRewardsService.grantReward(user.id, reward);
-
-    // 7. 요청 이력 저장
-    const created = new this.rewardRequestModel({
-      event: event._id,
-      reward: reward._id,
-      user: user.id,
-      status: 'SUCCESS',
-      createdBy: user.id,
-      updatedBy: user.id,
-    });
-    const saved = await created.save();
-
-    // 8. 응답 구성
-    return {
-      id: saved._id.toString(),
-      event: {
-        id: event._id.toString(),
-        title: event.title,
-      },
-      reward: {
-        id: reward._id.toString(),
-        type: reward.type,
-        amount: reward.amount,
-        coupons: grantReward.coupons,
-      },
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        roles: user.roles.map((role: any) => role.name),
-      },
-      status: created.status,
-      reason: created.reason,
-      createdBy: user.id,
-      updatedBy: user.id,
-      createdAt: saved.createdAt.toISOString(),
-      updatedAt: saved.updatedAt?.toISOString(),
-    };
   }
 
   private checkCondition(userStats: UserStatsDocument, event: EventDocument): boolean {

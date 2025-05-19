@@ -9,25 +9,21 @@ import { Role, RoleDocument } from './schemas/role.schema';
 @Injectable()
 export class RolesService {
   constructor(
-    @InjectModel(Role.name) // ✅ Role.name은 'Role' 클래스명이며 schema key와 일치
+    @InjectModel(Role.name)
     private readonly roleModel: Model<RoleDocument>,
   ) {}
 
-  async onModuleInit() {
-    const defaultRoles: { code: string; name: string }[] = [
-      { code: 'USER', name: '일반 사용자' },
-      { code: 'ADMIN', name: '관리자' },
-      { code: 'OPERATOR', name: '운영자' },
-      { code: 'AUDITOR', name: '감사자' },
-    ];
+  async createIfNotExists(code: string, name: string): Promise<RoleDocument> {
+    const existing = await this.roleModel.findOne({ code });
 
-    for (const role of defaultRoles) {
-      const exists = await this.roleModel.exists({ code: role.code });
-      if (!exists) {
-        await this.roleModel.create(role);
-        Logger.log(`기본 역할 추가됨: ${role.code} - ${role.name}`, 'RolesService');
-      }
+    if (existing) {
+      Logger.log(`역할 이미 존재함: ${code}`, 'RolesService');
+      return existing;
     }
+
+    const created = await this.roleModel.create({ code, name });
+    Logger.log(`역할 생성됨: ${code} - ${name}`, 'RolesService');
+    return created;
   }
 
   private toRoleRes(doc: RoleDocument): RoleRes {

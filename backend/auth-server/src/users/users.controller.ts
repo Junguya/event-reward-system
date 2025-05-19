@@ -1,6 +1,19 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  NotFoundException,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { CreateUserReq } from './dto/create-user.req';
@@ -78,14 +91,33 @@ export class UsersController {
 }
 
 @ApiTags('INTERNAL USERS')
-@Controller('internal/users')
+@Controller('internal')
 export class InternalUsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get(':id')
+  @Get('users/:id')
   @ApiOperation({ summary: '유저 단건 조회 (내부 호출 전용)' })
   @ApiParam({ name: 'id', description: '유저 ID (ObjectId)' })
   async findByIdInternal(@Param('id') id: string) {
     return this.usersService.findById(id);
+  }
+
+  @Get('admin')
+  @ApiOperation({ summary: '[내부용] 이메일로 유저 ID 조회' })
+  @ApiQuery({ name: 'email', description: '이메일 (쿼리 파라미터)' })
+  async getUserIdByEmail(@Query('email') email: string) {
+    if (!email) {
+      throw new BadRequestException('이메일을 전달해야 합니다.');
+    }
+
+    const user = await this.usersService.findByEmail(email);
+    if (!user) {
+      throw new NotFoundException(`이메일에 해당하는 유저가 없습니다: ${email}`);
+    }
+
+    return {
+      id: user._id.toString(),
+      email: user.email,
+    };
   }
 }

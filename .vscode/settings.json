@@ -56,7 +56,9 @@
   "cSpell.language": "en,ko",
   "cSpell.words": [
     "dtos",
+    "healthcheck",
     "INITDB",
+    "mongosh",
     "Nexon",
     "signup",
     "smhd",

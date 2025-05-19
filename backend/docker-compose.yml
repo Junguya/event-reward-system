@@ -35,7 +35,6 @@ services:
       "
     networks:
       - app-net
-    # 실행 후 자동 종료
 
   # Gateway Server
   gateway-server:
@@ -94,6 +93,34 @@ services:
       - mongodb
     networks:
       - app-net
+
+  # Auth Server 시드 초기화
+  auth-seed:
+    build:
+      context: ./auth-server
+      dockerfile: Dockerfile
+    container_name: auth-seed
+    command: npm run seed
+    depends_on:
+      auth-server:
+        condition: service_started
+    networks:
+      - app-net
+    restart: "no"
+
+  # Event Server 시드 초기화
+  event-seed:
+    build:
+      context: ./event-server
+      dockerfile: Dockerfile
+    container_name: event-seed
+    command: npm run seed
+    depends_on:
+      auth-server:
+        condition: service_started
+    networks:
+      - app-net
+    restart: "no"
 
 volumes:
   mongo-data:

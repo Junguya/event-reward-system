@@ -1,4 +1,4 @@
-<!-- markdownlint-disable MD033 -->
+<!-- markdownlint-disable MD040 -->
 
 # Gateway Server
 
@@ -12,8 +12,9 @@ NestJS 기반 API Gateway 서비스입니다.
 - 이후 요청마다 `accessToken`을 검증하고, 필요한 경우 `refreshToken`으로 갱신
 - 인증 통과 시, 내부 서비스(auth-server, event-server)로 요청을 프록시 처리
 
-<details>
-<summary>## 프로젝트 구조</summary>
+## 프로젝트 구조
+
+```
 src/
 ├── auth/ # 인증 관련 프록시 (로그인, 회원가입, 토큰 갱신 등)
 ├── roles/ # 역할 관리 프록시
@@ -25,8 +26,7 @@ src/
 ├── common/ # 공통 전략, 데코레이터, 가드 등
 ├── config/ # 환경 설정
 └── main.ts # 앱 진입점
-
-</details>
+```
 
 ## 실행 방법
 

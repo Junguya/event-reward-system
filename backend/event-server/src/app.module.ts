@@ -13,7 +13,6 @@ import { UserStatsModule } from './user-stats/user-stats.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
     }),
 
     DatabaseModule,

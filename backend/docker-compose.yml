@@ -1,17 +1,103 @@
-version: '3.8'
-
 services:
+  # MongoDB
   mongodb:
     image: mongo:6.0
     container_name: mongodb
+    command: ["--replSet", "rs0", "--bind_ip_all"]
     ports:
       - "27017:27017"
-    command: ["--replSet", "rs0"]
     volumes:
       - mongo-data:/data/db
-      - ./mongo-init:/docker-entrypoint-initdb.d
-    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-net
+
+  # Replica Set 초기화용 Init 컨테이너
+  mongo-init:
+    image: mongo:6.0
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    entrypoint: >
+      bash -c "
+        echo 'Initializing replica set…';
+        mongosh --host mongodb --eval '
+          rs.initiate({
+            _id: \"rs0\",
+            members: [{ _id: 0, host: \"mongodb:27017\" }]
+          });
+        ' &&
+        echo 'Replica set initiated.';
+      "
+    networks:
+      - app-net
+    # 실행 후 자동 종료
+
+  # Gateway Server
+  gateway-server:
+    build:
+      context: ./gateway-server
+      dockerfile: Dockerfile
+    container_name: gateway-server
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - JWT_SECRET=bdf6c7bf41706a34d7e6b220ce86a3fce8c65d532c70be68fa49b520916ceba8
+      - JWT_REFRESH_EXPIRE_TIME=7d
+      - AUTH_SERVICE_URL=http://auth-server:3001
+      - EVENT_SERVICE_URL=http://event-server:3002
+    depends_on:
+      - auth-server
+      - event-server
+    networks:
+      - app-net
+
+  # Auth Server
+  auth-server:
+    build:
+      context: ./auth-server
+      dockerfile: Dockerfile
+    container_name: auth-server
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - MONGO_URI=mongodb://mongodb:27017/auth_server?replicaSet=rs0
+      - JWT_SECRET=bdf6c7bf41706a34d7e6b220ce86a3fce8c65d532c70be68fa49b520916ceba8
+      - JWT_ACCESS_EXPIRE_TIME=1h
+      - JWT_REFRESH_EXPIRE_TIME=7d
+      - EVENT_SERVICE_URL=http://event-server:3002
+    depends_on:
+      - mongodb
+    networks:
+      - app-net
+
+  # Event Server
+  event-server:
+    build:
+      context: ./event-server
+      dockerfile: Dockerfile
+    container_name: event-server
+    ports:
+      - "3002:3002"
+    environment:
+      - PORT=3002
+      - MONGO_URI=mongodb://mongodb:27017/event_server?replicaSet=rs0
+      - JWT_SECRET=bdf6c7bf41706a34d7e6b220ce86a3fce8c65d532c70be68fa49b520916ceba8
+      - AUTH_SERVICE_URL=http://auth-server:3001
+    depends_on:
+      - mongodb
+    networks:
+      - app-net
 
 volumes:
   mongo-data:
-    driver: local
+
+networks:
+  app-net:
+    driver: bridge

@@ -1,7 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/common/decorators/roles.decorator';
-import { DevAuthGuard } from 'src/common/guards/dev-auth.guard';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/common/guards/roles.guard';
 import { AuthenticatedRequest } from 'src/common/types/authenticated-request.interface';
 import { CreateEventReq } from './dto/create-event.req';
 import { EventRes } from './dto/event.res';
@@ -10,8 +11,8 @@ import { EventsService } from './events.service';
 
 @ApiTags('이벤트')
 @ApiBearerAuth('access-token')
-@UseGuards(DevAuthGuard)
-// @UseGuards(JwtAuthGuard, RolesGuard)
+// @UseGuards(DevAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('events')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}

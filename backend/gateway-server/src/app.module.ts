@@ -11,7 +11,6 @@ import { UsersModule } from './users/users.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
     }),
 
     // Gateway는 DB대신 HTTP 통신 모듈 필요

@@ -10,10 +10,8 @@ import { UsersModule } from './users/users.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true, // 다른 모듈에서 import 할 필요 없이 어디서나 사용 가능
-      envFilePath: '.env',
     }),
 
-    // 여기에 DB, User, Role, Auth 모듈 순으로 로드
     DatabaseModule,
     UsersModule,
     AuthModule,

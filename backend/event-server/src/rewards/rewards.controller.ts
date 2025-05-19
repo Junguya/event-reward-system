@@ -1,7 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/common/decorators/roles.decorator';
-import { DevAuthGuard } from 'src/common/guards/dev-auth.guard';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/common/guards/roles.guard';
 import { AuthenticatedRequest } from 'src/common/types/authenticated-request.interface';
 import { CreateRewardReq } from './dto/create-reward.req';
 import { RewardRes } from './dto/reward.res';
@@ -10,8 +11,8 @@ import { RewardsService } from './rewards.service';
 
 @ApiTags('보상')
 @ApiBearerAuth('access-token')
-@UseGuards(DevAuthGuard)
-// @UseGuards(JwtAuthGuard, RolesGuard)
+// @UseGuards(DevAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('rewards')
 export class RewardsController {
   constructor(private readonly rewardsService: RewardsService) {}

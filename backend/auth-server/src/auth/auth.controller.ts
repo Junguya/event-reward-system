@@ -8,7 +8,7 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { JwtConfigService } from 'src/config/jwt.config';
 import { UsersService } from '../users/users.service';
@@ -51,6 +51,7 @@ export class AuthController {
   }
 
   @Post('signout')
+  @ApiBearerAuth('access-token')
   @HttpCode(200)
   @ApiOperation({ summary: '로그아웃 (Refresh 토큰 무효화)' })
   async signout(@Body('refreshToken') refreshToken: string): Promise<void> {
@@ -60,6 +61,7 @@ export class AuthController {
   }
 
   @Post('token/refresh')
+  @ApiBearerAuth('access-token')
   @HttpCode(200)
   @ApiOperation({ summary: 'Access Token 재발급' })
   @ApiBody({ schema: { example: { refreshToken: '...' } } })

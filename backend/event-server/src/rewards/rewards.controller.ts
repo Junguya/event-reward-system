@@ -26,16 +26,14 @@ export class RewardsController {
   }
 
   @Get()
-  @Roles('OPERATOR', 'AUDITOR', 'ADMIN')
-  @ApiOperation({ summary: '보상 전체 조회 (운영자, 감사자, 관리자)' })
+  @ApiOperation({ summary: '보상 전체 조회' })
   @ApiResponse({ status: 200, type: RewardRes, isArray: true })
   async findAll() {
     return this.rewardsService.findAll();
   }
 
   @Get(':id')
-  @Roles('OPERATOR', 'AUDITOR', 'ADMIN')
-  @ApiOperation({ summary: '보상 상세 조회 (운영자, 감사자, 관리자)' })
+  @ApiOperation({ summary: '보상 상세 조회' })
   @ApiResponse({ status: 200, type: RewardRes })
   async findById(@Param('id') id: string) {
     return this.rewardsService.findById(id);

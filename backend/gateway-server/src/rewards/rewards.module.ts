@@ -1,11 +1,12 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
-import { RewardRequestsController } from 'src/reward-requests/reward-requests.controller';
-import { RewardRequestsService } from 'src/reward-requests/reward-requests.service';
+
+import { RewardsController } from './rewards.controller';
+import { RewardsService } from './rewards.service';
 
 @Module({
   imports: [HttpModule],
-  controllers: [RewardRequestsController],
-  providers: [RewardRequestsService],
+  controllers: [RewardsController],
+  providers: [RewardsService],
 })
-export class RewardRequestsModule {}
+export class RewardsModule {}

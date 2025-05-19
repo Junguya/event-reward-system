@@ -47,6 +47,13 @@ async function bootstrap() {
       gender: 'M',
       roles: ['OPERATOR'],
     },
+    {
+      email: 'user@nexon.com',
+      password: 'password11!',
+      name: '유저',
+      gender: 'F',
+      roles: ['USER'],
+    },
   ];
 
   for (const user of users) {

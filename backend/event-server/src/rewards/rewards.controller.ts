@@ -9,7 +9,7 @@ import { RewardRes } from './dto/reward.res';
 import { UpdateRewardReq } from './dto/update-reward.req';
 import { RewardsService } from './rewards.service';
 
-@ApiTags('보상')
+@ApiTags('Rewards')
 @ApiBearerAuth('access-token')
 // @UseGuards(DevAuthGuard)
 @UseGuards(JwtAuthGuard, RolesGuard)

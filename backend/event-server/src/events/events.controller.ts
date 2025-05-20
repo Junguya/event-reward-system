@@ -9,7 +9,7 @@ import { EventRes } from './dto/event.res';
 import { UpdateEventReq } from './dto/update-event.req';
 import { EventsService } from './events.service';
 
-@ApiTags('이벤트')
+@ApiTags('Events')
 @ApiBearerAuth('access-token')
 // @UseGuards(DevAuthGuard)
 @UseGuards(JwtAuthGuard, RolesGuard)

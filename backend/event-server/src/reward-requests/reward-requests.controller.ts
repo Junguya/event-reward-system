@@ -8,7 +8,7 @@ import { FilterRewardRequestQuery } from './dto/filter-reward-request.query';
 import { RewardRequestRes } from './dto/reward-request.res';
 import { RewardRequestsService } from './reward-requests.service';
 
-@ApiTags('보상 요청')
+@ApiTags('Reward Requests')
 @ApiBearerAuth('access-token')
 // @UseGuards(DevAuthGuard)
 @UseGuards(JwtAuthGuard, RolesGuard)

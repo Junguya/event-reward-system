@@ -3,7 +3,7 @@ import { ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger'
 import { UserStatsRes } from './dto/user-stats.res';
 import { UserStatsService } from './user-stats.service';
 
-@ApiTags('유저 통계')
+@ApiTags('User Stats')
 @Controller('user-stats')
 export class UserStatsController {
   constructor(private readonly userStatsService: UserStatsService) {}

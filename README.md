@@ -96,3 +96,12 @@ Event: <http://localhost:3002/docs>
 
 - Swagger UI를 통해 전체 API 테스트 수행
 - MongoDB Compass를 통해 보상 상태, 통계 변화 직접 확인
+
+## 테스트 코드 안내
+
+- `event-server`에 핵심 비즈니스 로직에 대한 단위 테스트가 작성되어 있습니다.
+- 주요 테스트 시나리오:
+   1. 조건을 충족한 유저의 보상 요청은 SUCCESS 처리
+   2. 조건 미충족 시 FAILED 처리 및 사유 저장
+   3. 동일 이벤트 중복 요청 시 RAILED 처리
+- 테스트 실행 방법 및 상세 설명은 [`backend/event-server/README.md`](backend/event-server/README.md)를 참고하세요.

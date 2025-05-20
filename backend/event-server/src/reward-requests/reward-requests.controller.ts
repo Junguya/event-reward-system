@@ -1,6 +1,5 @@
 import { Body, Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Roles } from 'src/common/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { AuthenticatedRequest } from 'src/common/types/authenticated-request.interface';
@@ -18,8 +17,7 @@ export class RewardRequestsController {
   constructor(private readonly rewardRequestsService: RewardRequestsService) {}
 
   @Post()
-  @Roles('USER')
-  @ApiOperation({ summary: '보상 요청 (유저 전용)' })
+  @ApiOperation({ summary: '보상 요청' })
   @ApiResponse({ status: 201, type: RewardRequestRes })
   async requestReward(
     @Body() createRewardRequestReq: CreateRewardRequestReq,
